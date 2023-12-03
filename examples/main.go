@@ -8,9 +8,8 @@ import (
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
-	//rand.Seed(1)
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	maze := maze.New(20, 20)
-	maze.Generate()
+	maze.Generate(r)
 	maze.Print()
 }

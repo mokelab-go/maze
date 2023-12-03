@@ -14,7 +14,7 @@ const (
 
 type Maze interface {
 	// Generate generates a maze
-	Generate()
+	Generate(r *rand.Rand)
 
 	// Print prints the maze
 	Print()
@@ -42,9 +42,9 @@ func New(w, h int) Maze {
 	return out
 }
 
-func (m *maze) Generate() {
+func (m *maze) Generate(r *rand.Rand) {
 	m.setEdgeWalls()
-	cells := generateCells(m.cellWidth, m.cellHeight)
+	cells := generateCells(r, m.cellWidth, m.cellHeight)
 	for c, cell := range cells {
 		x := (cell%m.cellWidth)*2 + 2
 		y := (cell/m.cellWidth)*2 + 2
@@ -56,7 +56,7 @@ func (m *maze) Generate() {
 		stack := newStack()
 		for {
 			m.set(x, y, wallId)
-			directions := generateDirections()
+			directions := generateDirections(r)
 			done := false
 			moved := false
 			for _, direction := range directions {
@@ -182,20 +182,20 @@ func (m *maze) setEdgeWalls() {
 	}
 }
 
-func generateCells(w, h int) []int {
+func generateCells(r *rand.Rand, w, h int) []int {
 	out := make([]int, w*h)
 	for i := 0; i < len(out); i++ {
 		out[i] = i
 	}
-	rand.Shuffle(len(out), func(i, j int) {
+	r.Shuffle(len(out), func(i, j int) {
 		out[i], out[j] = out[j], out[i]
 	})
 	return out
 }
 
-func generateDirections() []int {
+func generateDirections(r *rand.Rand) []int {
 	out := []int{directionUp, directionLeft, directionRight, directionDown}
-	rand.Shuffle(len(out), func(i, j int) {
+	r.Shuffle(len(out), func(i, j int) {
 		out[i], out[j] = out[j], out[i]
 	})
 	return out
